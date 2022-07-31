@@ -18,6 +18,7 @@ router.get('/', async (req, res) => {
         ]
       }
     );
+
     res.status(200).json(tagData);
   } catch (err) {
     res.status(500).json(err);
@@ -38,7 +39,7 @@ router.get('/:id', async (req, res) => {
       ]
     });
     if (!tagData) {
-      res.status(404).json({message: 'No reader found with that ID'});
+      res.status(404).json({message: 'No product found with that ID'});
       return;
     }
 
@@ -48,14 +49,14 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
   // create a new tag
-  try {
-    const tagData = await Tag.create(req.body.tag_name)
-    res.status(200).json(tagData);
-  } catch (err) {
-    res.status(400).json(err);
-  }
+  Tag.create({tag_name: req.body.tag_name})
+    .then(tagData => res.json(tagData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 router.put('/:id', (req, res) => {
